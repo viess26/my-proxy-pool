@@ -2,14 +2,13 @@ name: Auto Update Proxy Pool
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 每小时的第 0 分钟自动执行一次
-  workflow_dispatch:      # 允许我们手动点击按钮触发
+    - cron: '0 */6 * * *'  # 更改为：每 6 个小时（每天的 0点, 6点, 12点, 18点）自动执行一次
+  workflow_dispatch:        # 依然保留手动触发按钮
 
 jobs:
   run-proxy-pool:
     runs-on: ubuntu-latest
     
-    # 给 Actions 写入仓库的权限
     permissions:
       contents: write
 
@@ -33,7 +32,6 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git add proxies.json
-        # 如果文件没有变化，就不提交，防止报错
-        git commit -m "自动更新 IP 节点池" || exit 0
+        git add proxies.json sub.txt nodes_plain.txt || true
+        git commit -m "自动更新节点订阅源" || exit 0
         git push
